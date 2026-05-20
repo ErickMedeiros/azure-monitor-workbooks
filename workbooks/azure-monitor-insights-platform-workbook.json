@@ -175,7 +175,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Resources\n| where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| where type in~ ('microsoft.compute/virtualmachines','microsoft.web/sites','microsoft.storage/storageaccounts','microsoft.sql/servers/databases','microsoft.dbforpostgresql/flexibleservers/databases','microsoft.dbformysql/flexibleservers/databases')\n| extend Tipo = case(\n    type =~ 'microsoft.compute/virtualmachines', 'Virtual Machines',\n    type =~ 'microsoft.web/sites', 'App Services',\n    type =~ 'microsoft.storage/storageaccounts', 'Storage Accounts',\n    type =~ 'microsoft.sql/servers/databases', 'Azure SQL Databases',\n    type =~ 'microsoft.dbforpostgresql/flexibleservers/databases', 'PostgreSQL Flexible Server DBs',\n    type =~ 'microsoft.dbformysql/flexibleservers/databases', 'MySQL Flexible Server DBs',\n    'Outros'\n)\n| summarize Quantidade = count() by Tipo\n| order by Quantidade desc",
+              "query": "Resources\n| where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| where type in~ ('microsoft.compute/virtualmachines','microsoft.web/sites','microsoft.storage/storageaccounts','microsoft.sql/servers/databases','microsoft.dbforpostgresql/flexibleservers/databases','microsoft.dbformysql/flexibleservers/databases')\n| extend Tipo = case(\n    type =~ 'microsoft.compute/virtualmachines', 'Virtual Machines',\n    type =~ 'microsoft.web/sites', 'App Services',\n    type =~ 'microsoft.storage/storageaccounts', 'Storage Accounts',\n    type =~ 'microsoft.sql/servers/databases', 'Azure SQL Databases',\n    type =~ 'microsoft.dbforpostgresql/flexibleservers/databases', 'PostgreSQL Flexible Server DBs',\n    type =~ 'microsoft.dbformysql/flexibleservers/databases', 'MySQL Flexible Server DBs',\n    'Outros'\n)\n| summarize Quantidade = count() by Tipo\n| order by Quantidade desc",
               "size": 4,
               "title": "Inventário de Recursos por Tipo",
               "timeContextFromParameter": "TimeRange",
@@ -203,7 +203,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Resources\n| where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| where type in~ ('microsoft.compute/virtualmachines','microsoft.web/sites','microsoft.storage/storageaccounts','microsoft.sql/servers/databases','microsoft.dbforpostgresql/flexibleservers/databases','microsoft.dbformysql/flexibleservers/databases')\n| summarize Quantidade = count() by location\n| where isnotempty(location)\n| project latitude = location, longitude = location, title = location, size = Quantidade",
+              "query": "Resources\n| where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| where type in~ ('microsoft.compute/virtualmachines','microsoft.web/sites','microsoft.storage/storageaccounts','microsoft.sql/servers/databases','microsoft.dbforpostgresql/flexibleservers/databases','microsoft.dbformysql/flexibleservers/databases')\n| summarize Quantidade = count() by location\n| where isnotempty(location)\n| project latitude = location, longitude = location, title = location, size = Quantidade",
               "size": 3,
               "title": "Distribuição por Região",
               "timeContextFromParameter": "TimeRange",
@@ -220,7 +220,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Resources\n| where type =~ 'microsoft.compute/virtualmachines'\n| where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| summarize Quantidade = count() by Tamanho = tostring(properties.hardwareProfile.vmSize)\n| order by Quantidade desc",
+              "query": "Resources\n| where type =~ 'microsoft.compute/virtualmachines'\n| where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| summarize Quantidade = count() by Tamanho = tostring(properties.hardwareProfile.vmSize)\n| order by Quantidade desc",
               "size": 3,
               "title": "VMs — Inventário por Tamanho",
               "timeContextFromParameter": "TimeRange",
@@ -237,7 +237,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Resources\n| where type =~ 'microsoft.web/serverfarms'\n| where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| summarize Quantidade = count() by SKU = tostring(sku.name), Tier = tostring(sku.tier)\n| order by Quantidade desc",
+              "query": "Resources\n| where type =~ 'microsoft.web/serverfarms'\n| where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| summarize Quantidade = count() by SKU = tostring(sku.name), Tier = tostring(sku.tier)\n| order by Quantidade desc",
               "size": 4,
               "title": "App Service Plans — SKU e Tier",
               "timeContextFromParameter": "TimeRange",
@@ -286,7 +286,7 @@
                   "type": 5,
                   "isRequired": false,
                   "multiSelect": true,
-                  "query": "Resources | where type =~ 'microsoft.compute/virtualmachines' | where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = name | order by label asc",
+                  "query": "Resources | where type =~ 'microsoft.compute/virtualmachines' | where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = name | order by label asc",
                   "crossComponentResources": [
                     "{Subscription}"
                   ],
@@ -324,7 +324,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Resources\n| where type =~ 'microsoft.compute/virtualmachines'\n| where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| project Nome = name, ['Grupo de Recursos'] = resourceGroup, Região = location, Tamanho = tostring(properties.hardwareProfile.vmSize), SO = tostring(properties.storageProfile.osDisk.osType), Estado = tostring(properties.provisioningState)\n| order by Nome asc",
+              "query": "Resources\n| where type =~ 'microsoft.compute/virtualmachines'\n| where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| project Nome = name, ['Grupo de Recursos'] = resourceGroup, Região = location, Tamanho = tostring(properties.hardwareProfile.vmSize), SO = tostring(properties.storageProfile.osDisk.osType), Estado = tostring(properties.provisioningState)\n| order by Nome asc",
               "size": 4,
               "title": "Lista de Máquinas Virtuais",
               "timeContextFromParameter": "TimeRange",
@@ -577,7 +577,7 @@
                   "type": 5,
                   "isRequired": false,
                   "multiSelect": true,
-                  "query": "Resources | where type =~ 'microsoft.web/sites' | where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = name | order by label asc",
+                  "query": "Resources | where type =~ 'microsoft.web/sites' | where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = name | order by label asc",
                   "crossComponentResources": [
                     "{Subscription}"
                   ],
@@ -604,7 +604,7 @@
                   "type": 5,
                   "isRequired": false,
                   "multiSelect": true,
-                  "query": "Resources | where type =~ 'microsoft.web/serverfarms' | where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = name | order by label asc",
+                  "query": "Resources | where type =~ 'microsoft.web/serverfarms' | where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = name | order by label asc",
                   "crossComponentResources": [
                     "{Subscription}"
                   ],
@@ -642,7 +642,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Resources\n| where type =~ 'microsoft.web/sites'\n| where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| project Nome = name, ['Grupo de Recursos'] = resourceGroup, Região = location, Kind = kind, Estado = tostring(properties.state), Hostname = tostring(properties.defaultHostName)\n| order by Nome asc",
+              "query": "Resources\n| where type =~ 'microsoft.web/sites'\n| where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| project Nome = name, ['Grupo de Recursos'] = resourceGroup, Região = location, Kind = kind, Estado = tostring(properties.state), Hostname = tostring(properties.defaultHostName)\n| order by Nome asc",
               "size": 4,
               "title": "Lista de App Services",
               "timeContextFromParameter": "TimeRange",
