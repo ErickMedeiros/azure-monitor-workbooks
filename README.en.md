@@ -36,22 +36,6 @@ The [`workbook.json`](./workbook.json) file contains the **serialized definition
 - Read permissions on the resources to be inventoried (e.g., `Reader`);
 - Access to **Azure Monitor** and **Azure Resource Graph**.
 
-## 🖼️ Screenshots
-
-> 💡 The images below illustrate the Workbook running in the Azure portal. Add the corresponding files to the [`docs/images`](./docs/images) folder and update the paths as needed.
-
-### Inventory overview
-
-![Inventory overview](./docs/images/overview.png)
-
-### Metrics breakdown
-
-![Metrics breakdown](./docs/images/metrics.png)
-
-### Filters and parameters
-
-![Filters and parameters](./docs/images/parameters.png)
-
 ## 📜 License
 
 Distributed under the **MIT** License. See [LICENSE](./LICENSE) for more information.
