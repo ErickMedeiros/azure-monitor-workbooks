@@ -1,0 +1,956 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "b9a1e29c-0001-4321-8765-b9a1e29c0001",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "label": "Assinatura",
+            "type": 6,
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "includeAll": false
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "defaultValue": "value::all"
+          },
+          {
+            "id": "b9a1e29c-0002-4321-8765-b9a1e29c0002",
+            "version": "KqlParameterItem/1.0",
+            "name": "ResourceGroup",
+            "label": "Grupo de Recursos",
+            "type": 2,
+            "isRequired": false,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions/resourcegroups' | project value = resourceGroup, label = resourceGroup | order by label asc",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": [
+              "value::all"
+            ]
+          },
+          {
+            "id": "b9a1e29c-0003-4321-8765-b9a1e29c0003",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Período",
+            "type": 4,
+            "isRequired": true,
+            "value": {
+              "durationMs": 604800000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1296000000
+                },
+                {
+                  "durationMs": 2592000000
+                },
+                {
+                  "durationMs": 5184000000
+                }
+              ],
+              "allowCustom": true
+            }
+          },
+          {
+            "id": "b9a1e29c-0004-4321-8765-b9a1e29c0004",
+            "version": "KqlParameterItem/1.0",
+            "name": "selectedTab",
+            "label": "Aba",
+            "type": 1,
+            "isRequired": true,
+            "value": "Executivo",
+            "isHiddenWhenLocked": true,
+            "typeSettings": {}
+          }
+        ]
+      },
+      "name": "parameters-global"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "b9a1e29c-0010-4321-8765-b9a1e29c0010",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "📊 Executivo",
+            "subTarget": "Executivo",
+            "style": "primary"
+          },
+          {
+            "id": "b9a1e29c-0011-4321-8765-b9a1e29c0011",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "💻 Máquinas Virtuais",
+            "subTarget": "VMs",
+            "style": "primary"
+          },
+          {
+            "id": "b9a1e29c-0012-4321-8765-b9a1e29c0012",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "🌐 App Services",
+            "subTarget": "AppServices",
+            "style": "primary"
+          },
+          {
+            "id": "b9a1e29c-0013-4321-8765-b9a1e29c0013",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "🗄️ Storage",
+            "subTarget": "Storage",
+            "style": "primary"
+          },
+          {
+            "id": "b9a1e29c-0014-4321-8765-b9a1e29c0014",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "🛢️ Databases PaaS",
+            "subTarget": "Databases",
+            "style": "primary"
+          },
+          {
+            "id": "b9a1e29c-0015-4321-8765-b9a1e29c0015",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "💡 Oportunidades",
+            "subTarget": "Oportunidades",
+            "style": "primary"
+          }
+        ]
+      },
+      "name": "tab-navigation"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## 📊 Visão Executiva\n\nResumo de inventário e consumo de recursos Azure no período selecionado.\n\n> ℹ️ **Fontes**: Azure Resource Graph (inventário) + Azure Monitor Metrics (telemetria).",
+              "style": "text"
+            },
+            "name": "text-exec-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\n| where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| where type in~ ('microsoft.compute/virtualmachines','microsoft.web/sites','microsoft.storage/storageaccounts','microsoft.sql/servers/databases','microsoft.dbforpostgresql/flexibleservers/databases','microsoft.dbformysql/flexibleservers/databases')\n| extend Tipo = case(\n    type =~ 'microsoft.compute/virtualmachines', 'Virtual Machines',\n    type =~ 'microsoft.web/sites', 'App Services',\n    type =~ 'microsoft.storage/storageaccounts', 'Storage Accounts',\n    type =~ 'microsoft.sql/servers/databases', 'Azure SQL Databases',\n    type =~ 'microsoft.dbforpostgresql/flexibleservers/databases', 'PostgreSQL Flexible Server DBs',\n    type =~ 'microsoft.dbformysql/flexibleservers/databases', 'MySQL Flexible Server DBs',\n    'Outros'\n)\n| summarize Quantidade = count() by Tipo\n| order by Quantidade desc",
+              "size": 4,
+              "title": "Inventário de Recursos por Tipo",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Quantidade",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "palette": "blue"
+                    }
+                  }
+                ]
+              }
+            },
+            "name": "query-exec-inv"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\n| where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| where type in~ ('microsoft.compute/virtualmachines','microsoft.web/sites','microsoft.storage/storageaccounts','microsoft.sql/servers/databases','microsoft.dbforpostgresql/flexibleservers/databases','microsoft.dbformysql/flexibleservers/databases')\n| summarize Quantidade = count() by location\n| where isnotempty(location)\n| project latitude = location, longitude = location, title = location, size = Quantidade",
+              "size": 3,
+              "title": "Distribuição por Região",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "map"
+            },
+            "name": "query-exec-region"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\n| where type =~ 'microsoft.compute/virtualmachines'\n| where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| summarize Quantidade = count() by Tamanho = tostring(properties.hardwareProfile.vmSize)\n| order by Quantidade desc",
+              "size": 3,
+              "title": "VMs — Inventário por Tamanho",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "piechart"
+            },
+            "name": "query-exec-vm-sizes"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\n| where type =~ 'microsoft.web/serverfarms'\n| where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| summarize Quantidade = count() by SKU = tostring(sku.name), Tier = tostring(sku.tier)\n| order by Quantidade desc",
+              "size": 4,
+              "title": "App Service Plans — SKU e Tier",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "table"
+            },
+            "name": "query-exec-asp-sku"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "### Limitações Conhecidas\n\n| Recurso | Fonte | Observação |\n|---------|-------|------------|\n| CPU, Disco, Rede (VMs) | Azure Monitor Metrics | Métricas de host, sem agente adicional |\n| Memória (VMs) | Azure Monitor Agent + DCR | Requer configuração adicional |\n| App Service CPU/Memória % | Azure Monitor Metrics | Disponível no nível do App Service Plan |",
+              "style": "text"
+            },
+            "name": "text-exec-notes"
+          }
+        ]
+      },
+      "name": "tab-executivo",
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Executivo"
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "b9a1e29c-0020-4321-8765-b9a1e29c0020",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "VMs",
+                  "label": "Máquinas Virtuais",
+                  "type": 5,
+                  "isRequired": false,
+                  "multiSelect": true,
+                  "query": "Resources | where type =~ 'microsoft.compute/virtualmachines' | where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = name | order by label asc",
+                  "crossComponentResources": [
+                    "{Subscription}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": [
+                      "value::all"
+                    ],
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "queryType": 1,
+                  "resourceType": "microsoft.resourcegraph/resources",
+                  "value": [
+                    "value::all"
+                  ]
+                }
+              ],
+              "crossComponentResources": [
+                "{Subscription}"
+              ]
+            },
+            "name": "params-vms"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "## 💻 Máquinas Virtuais\n\nMétricas nativas de CPU, disco e rede. Use o seletor **Máquinas Virtuais** para filtrar recursos específicos.\n\n> ⚠️ **Memória**: Requer Azure Monitor Agent (AMA) + Data Collection Rule (DCR).",
+              "style": "text"
+            },
+            "name": "text-vms-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\n| where type =~ 'microsoft.compute/virtualmachines'\n| where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| project Nome = name, ['Grupo de Recursos'] = resourceGroup, Região = location, Tamanho = tostring(properties.hardwareProfile.vmSize), SO = tostring(properties.storageProfile.osDisk.osType), Estado = tostring(properties.provisioningState)\n| order by Nome asc",
+              "size": 4,
+              "title": "Lista de Máquinas Virtuais",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "table"
+            },
+            "name": "query-vms-list"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-vm-cpu-avg",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.compute/virtualmachines",
+              "metricScope": 0,
+              "resourceParameter": "VMs",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.compute/virtualmachines",
+                  "metric": "microsoft.compute/virtualmachines--Percentage CPU",
+                  "aggregation": 4,
+                  "splitBy": null
+                }
+              ],
+              "title": "CPU — Percentual Médio (%)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-vm-cpu-avg"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-vm-cpu-max",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.compute/virtualmachines",
+              "metricScope": 0,
+              "resourceParameter": "VMs",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.compute/virtualmachines",
+                  "metric": "microsoft.compute/virtualmachines--Percentage CPU",
+                  "aggregation": 5,
+                  "splitBy": null
+                }
+              ],
+              "title": "CPU — Pico Máximo (%)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-vm-cpu-max"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-vm-osdisk",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.compute/virtualmachines",
+              "metricScope": 0,
+              "resourceParameter": "VMs",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.compute/virtualmachines",
+                  "metric": "microsoft.compute/virtualmachines--OS Disk Read Bytes/sec",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.compute/virtualmachines",
+                  "metric": "microsoft.compute/virtualmachines--OS Disk Write Bytes/sec",
+                  "aggregation": 4,
+                  "splitBy": null
+                }
+              ],
+              "title": "Disco OS — Leitura e Escrita (bytes/s)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-vm-osdisk-bytes"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-vm-disk-iops",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.compute/virtualmachines",
+              "metricScope": 0,
+              "resourceParameter": "VMs",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.compute/virtualmachines",
+                  "metric": "microsoft.compute/virtualmachines--OS Disk Read Operations/Sec",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.compute/virtualmachines",
+                  "metric": "microsoft.compute/virtualmachines--OS Disk Write Operations/Sec",
+                  "aggregation": 4,
+                  "splitBy": null
+                }
+              ],
+              "title": "Disco OS — IOPS de Leitura e Escrita",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-vm-disk-iops"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-vm-datadisk",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.compute/virtualmachines",
+              "metricScope": 0,
+              "resourceParameter": "VMs",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.compute/virtualmachines",
+                  "metric": "microsoft.compute/virtualmachines--Data Disk Read Bytes/sec",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.compute/virtualmachines",
+                  "metric": "microsoft.compute/virtualmachines--Data Disk Write Bytes/sec",
+                  "aggregation": 4,
+                  "splitBy": null
+                }
+              ],
+              "title": "Disco Data — Leitura e Escrita (bytes/s)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-vm-datadisk"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-vm-network",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.compute/virtualmachines",
+              "metricScope": 0,
+              "resourceParameter": "VMs",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.compute/virtualmachines",
+                  "metric": "microsoft.compute/virtualmachines--Network In Total",
+                  "aggregation": 6,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.compute/virtualmachines",
+                  "metric": "microsoft.compute/virtualmachines--Network Out Total",
+                  "aggregation": 6,
+                  "splitBy": null
+                }
+              ],
+              "title": "Rede — Entrada e Saída Total (bytes)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-vm-network"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "### 🧠 Memória em VMs — Como Habilitar\n\n1. Instale o **Azure Monitor Agent (AMA)** na VM\n2. Crie uma **Data Collection Rule (DCR)** com Performance Counters\n3. Configure contadores como **Available Memory Bytes** ou **% Committed Bytes In Use**\n4. Envie os dados para um **Log Analytics Workspace**",
+              "style": "text"
+            },
+            "name": "text-vms-memory"
+          }
+        ]
+      },
+      "name": "tab-vms",
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "VMs"
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "b9a1e29c-0030-4321-8765-b9a1e29c0030",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "AppServices",
+                  "label": "App Services",
+                  "type": 5,
+                  "isRequired": false,
+                  "multiSelect": true,
+                  "query": "Resources | where type =~ 'microsoft.web/sites' | where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = name | order by label asc",
+                  "crossComponentResources": [
+                    "{Subscription}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": [
+                      "value::all"
+                    ],
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "queryType": 1,
+                  "resourceType": "microsoft.resourcegraph/resources",
+                  "value": [
+                    "value::all"
+                  ]
+                },
+                {
+                  "id": "b9a1e29c-0031-4321-8765-b9a1e29c0031",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "AppServicePlans",
+                  "label": "App Service Plans",
+                  "type": 5,
+                  "isRequired": false,
+                  "multiSelect": true,
+                  "query": "Resources | where type =~ 'microsoft.web/serverfarms' | where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = name | order by label asc",
+                  "crossComponentResources": [
+                    "{Subscription}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": [
+                      "value::all"
+                    ],
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "queryType": 1,
+                  "resourceType": "microsoft.resourcegraph/resources",
+                  "value": [
+                    "value::all"
+                  ]
+                }
+              ],
+              "crossComponentResources": [
+                "{Subscription}"
+              ]
+            },
+            "name": "params-apps"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "## 🌐 App Services\n\nMétricas nativas de CPU, memória, requests, latência e erros HTTP.\n\n> 💡 **CPU/Memória %**: disponíveis no nível do **App Service Plan** (`microsoft.web/serverfarms`).",
+              "style": "text"
+            },
+            "name": "text-apps-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\n| where type =~ 'microsoft.web/sites'\n| where array_length({ResourceGroup}) == 0 or 'value::all' in ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| project Nome = name, ['Grupo de Recursos'] = resourceGroup, Região = location, Kind = kind, Estado = tostring(properties.state), Hostname = tostring(properties.defaultHostName)\n| order by Nome asc",
+              "size": 4,
+              "title": "Lista de App Services",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "table"
+            },
+            "name": "query-apps-list"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-appplan-cpu",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.web/serverfarms",
+              "metricScope": 0,
+              "resourceParameter": "AppServicePlans",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.web/serverfarms",
+                  "metric": "microsoft.web/serverfarms--CpuPercentage",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.web/serverfarms",
+                  "metric": "microsoft.web/serverfarms--CpuPercentage",
+                  "aggregation": 5,
+                  "splitBy": null
+                }
+              ],
+              "title": "App Service Plan — CPU (%)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-appplan-cpu"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-appplan-mem",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.web/serverfarms",
+              "metricScope": 0,
+              "resourceParameter": "AppServicePlans",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.web/serverfarms",
+                  "metric": "microsoft.web/serverfarms--MemoryPercentage",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.web/serverfarms",
+                  "metric": "microsoft.web/serverfarms--MemoryPercentage",
+                  "aggregation": 5,
+                  "splitBy": null
+                }
+              ],
+              "title": "App Service Plan — Memória (%)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-appplan-mem"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-app-memory",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.web/sites",
+              "metricScope": 0,
+              "resourceParameter": "AppServices",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.web/sites",
+                  "metric": "microsoft.web/sites--MemoryWorkingSet",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.web/sites",
+                  "metric": "microsoft.web/sites--AverageMemoryWorkingSet",
+                  "aggregation": 4,
+                  "splitBy": null
+                }
+              ],
+              "title": "App — Memória Working Set (bytes)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-app-memory"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-app-requests",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.web/sites",
+              "metricScope": 0,
+              "resourceParameter": "AppServices",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.web/sites",
+                  "metric": "microsoft.web/sites--Requests",
+                  "aggregation": 6,
+                  "splitBy": null
+                }
+              ],
+              "title": "App — Requisições Totais",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-app-requests"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-app-errors",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.web/sites",
+              "metricScope": 0,
+              "resourceParameter": "AppServices",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.web/sites",
+                  "metric": "microsoft.web/sites--Http4xx",
+                  "aggregation": 6,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.web/sites",
+                  "metric": "microsoft.web/sites--Http5xx",
+                  "aggregation": 6,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.web/sites",
+                  "metric": "microsoft.web/sites--Http403",
+                  "aggregation": 6,
+                  "splitBy": null
+                }
+              ],
+              "title": "App — Erros HTTP (4xx e 5xx)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-app-errors"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-app-latency",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.web/sites",
+              "metricScope": 0,
+              "resourceParameter": "AppServices",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.web/sites",
+                  "metric": "microsoft.web/sites--AverageResponseTime",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.web/sites",
+                  "metric": "microsoft.web/sites--HttpResponseTime",
+                  "aggregation": 4,
+                  "splitBy": null
+                }
+              ],
+              "title": "App — Tempo Médio de Resposta (s)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-app-latency"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-app-traffic",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.web/sites",
+              "metricScope": 0,
+              "resourceParameter": "AppServices",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.web/sites",
+                  "metric": "microsoft.web/sites--BytesReceived",
+                  "aggregation": 6,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.web/sites",
+                  "metric": "microsoft.web/sites--BytesSent",
+                  "aggregation": 6,
+                  "splitBy": null
+                }
+              ],
+              "title": "App — Tráfego de Dados (bytes)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-app-traffic"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-app-connections",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.web/sites",
+              "metricScope": 0,
+              "resourceParameter": "AppServices",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.web/sites",
+                  "metric": "microsoft.web/sites--AppConnections",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.web/sites",
+                  "metric": "microsoft.web/sites--Threads",
+                  "aggregation": 4,
+                  "splitBy": null
+                }
+              ],
+              "title": "App — Conexões e Threads",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-app-connections"
+          }
+        ]
+      },
+      "name": "tab-appservices",
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "AppServices"
+      }
+    }
+  ]
+}
