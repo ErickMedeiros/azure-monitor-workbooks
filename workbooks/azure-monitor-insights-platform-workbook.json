@@ -340,7 +340,7 @@
           {
             "type": 10,
             "content": {
-              "chartId": "chart-vm-cpu-avg",
+              "chartId": "chart-vm-cpu",
               "version": "MetricsItem/2.0",
               "size": 1,
               "chartType": 2,
@@ -357,31 +357,7 @@
                   "metric": "microsoft.compute/virtualmachines--Percentage CPU",
                   "aggregation": 4,
                   "splitBy": null
-                }
-              ],
-              "title": "CPU — Percentual Médio (%)",
-              "showOpenInMetricsExplorer": true,
-              "splitBy": {
-                "value": null
-              }
-            },
-            "name": "metric-vm-cpu-avg"
-          },
-          {
-            "type": 10,
-            "content": {
-              "chartId": "chart-vm-cpu-max",
-              "version": "MetricsItem/2.0",
-              "size": 1,
-              "chartType": 2,
-              "resourceType": "microsoft.compute/virtualmachines",
-              "metricScope": 0,
-              "resourceParameter": "VMs",
-              "resourceIds": [],
-              "timeContext": {
-                "durationMs": 0
-              },
-              "metrics": [
+                },
                 {
                   "namespace": "microsoft.compute/virtualmachines",
                   "metric": "microsoft.compute/virtualmachines--Percentage CPU",
@@ -389,13 +365,13 @@
                   "splitBy": null
                 }
               ],
-              "title": "CPU — Pico Máximo (%)",
+              "title": "CPU — Média e Pico (%)",
               "showOpenInMetricsExplorer": true,
               "splitBy": {
                 "value": null
               }
             },
-            "name": "metric-vm-cpu-max"
+            "name": "metric-vm-cpu"
           },
           {
             "type": 10,
@@ -523,13 +499,13 @@
                 {
                   "namespace": "microsoft.compute/virtualmachines",
                   "metric": "microsoft.compute/virtualmachines--Network In Total",
-                  "aggregation": 6,
+                  "aggregation": 2,
                   "splitBy": null
                 },
                 {
                   "namespace": "microsoft.compute/virtualmachines",
                   "metric": "microsoft.compute/virtualmachines--Network Out Total",
-                  "aggregation": 6,
+                  "aggregation": 2,
                   "splitBy": null
                 }
               ],
@@ -781,7 +757,7 @@
                 {
                   "namespace": "microsoft.web/sites",
                   "metric": "microsoft.web/sites--Requests",
-                  "aggregation": 6,
+                  "aggregation": 2,
                   "splitBy": null
                 }
               ],
@@ -811,19 +787,19 @@
                 {
                   "namespace": "microsoft.web/sites",
                   "metric": "microsoft.web/sites--Http4xx",
-                  "aggregation": 6,
+                  "aggregation": 2,
                   "splitBy": null
                 },
                 {
                   "namespace": "microsoft.web/sites",
                   "metric": "microsoft.web/sites--Http5xx",
-                  "aggregation": 6,
+                  "aggregation": 2,
                   "splitBy": null
                 },
                 {
                   "namespace": "microsoft.web/sites",
                   "metric": "microsoft.web/sites--Http403",
-                  "aggregation": 6,
+                  "aggregation": 2,
                   "splitBy": null
                 }
               ],
@@ -889,13 +865,13 @@
                 {
                   "namespace": "microsoft.web/sites",
                   "metric": "microsoft.web/sites--BytesReceived",
-                  "aggregation": 6,
+                  "aggregation": 2,
                   "splitBy": null
                 },
                 {
                   "namespace": "microsoft.web/sites",
                   "metric": "microsoft.web/sites--BytesSent",
-                  "aggregation": 6,
+                  "aggregation": 2,
                   "splitBy": null
                 }
               ],
@@ -950,6 +926,719 @@
         "parameterName": "selectedTab",
         "comparison": "isEqualTo",
         "value": "AppServices"
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "b9a1e29c-0040-4321-8765-b9a1e29c0040",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "StorageAccounts",
+                  "label": "Storage Accounts",
+                  "type": 5,
+                  "isRequired": false,
+                  "multiSelect": true,
+                  "query": "Resources | where type =~ 'microsoft.storage/storageaccounts' | where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = name | order by label asc",
+                  "crossComponentResources": [
+                    "{Subscription}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": [
+                      "value::all"
+                    ],
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "queryType": 1,
+                  "resourceType": "microsoft.resourcegraph/resources",
+                  "value": [
+                    "value::all"
+                  ]
+                }
+              ],
+              "crossComponentResources": [
+                "{Subscription}"
+              ]
+            },
+            "name": "params-storage"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "## 🗄️ Storage\n\nMétricas nativas de capacidade, transações, tráfego e latência para Storage Accounts.\n\n> ℹ️ **Sub-serviços**: métricas como `BlobCapacity`, `BlobCount` e `FileCapacity` exigem os resource types `microsoft.storage/storageaccounts/blobServices` ou `microsoft.storage/storageaccounts/fileServices` com namespace próprio.",
+              "style": "text"
+            },
+            "name": "text-storage-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\n| where type =~ 'microsoft.storage/storageaccounts'\n| where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| project Nome = name, ['Grupo de Recursos'] = resourceGroup, SKU = tostring(sku.name), Kind = kind, AccessTier = tostring(properties.accessTier), Location = location, Replicacao = tostring(sku.name)\n| order by Nome asc",
+              "size": 4,
+              "title": "Lista de Storage Accounts",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "table"
+            },
+            "name": "query-storage-list"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-storage-capacity",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.storage/storageaccounts",
+              "metricScope": 0,
+              "resourceParameter": "StorageAccounts",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.storage/storageaccounts",
+                  "metric": "microsoft.storage/storageaccounts--UsedCapacity",
+                  "aggregation": 4,
+                  "splitBy": null
+                }
+              ],
+              "title": "Storage — Capacidade Usada (bytes)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-storage-capacity"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-storage-transactions-traffic",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.storage/storageaccounts",
+              "metricScope": 0,
+              "resourceParameter": "StorageAccounts",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.storage/storageaccounts",
+                  "metric": "microsoft.storage/storageaccounts--Transactions",
+                  "aggregation": 2,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.storage/storageaccounts",
+                  "metric": "microsoft.storage/storageaccounts--Ingress",
+                  "aggregation": 2,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.storage/storageaccounts",
+                  "metric": "microsoft.storage/storageaccounts--Egress",
+                  "aggregation": 2,
+                  "splitBy": null
+                }
+              ],
+              "title": "Storage — Transações, Ingress e Egress",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-storage-transactions-traffic"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-storage-latency",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.storage/storageaccounts",
+              "metricScope": 0,
+              "resourceParameter": "StorageAccounts",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.storage/storageaccounts",
+                  "metric": "microsoft.storage/storageaccounts--SuccessE2ELatency",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.storage/storageaccounts",
+                  "metric": "microsoft.storage/storageaccounts--SuccessServerLatency",
+                  "aggregation": 4,
+                  "splitBy": null
+                }
+              ],
+              "title": "Storage — Latência E2E e de Servidor (ms)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-storage-latency"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-storage-availability",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.storage/storageaccounts",
+              "metricScope": 0,
+              "resourceParameter": "StorageAccounts",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.storage/storageaccounts",
+                  "metric": "microsoft.storage/storageaccounts--Availability",
+                  "aggregation": 4,
+                  "splitBy": null
+                }
+              ],
+              "title": "Storage — Disponibilidade (%)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-storage-availability"
+          }
+        ]
+      },
+      "name": "tab-storage",
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Storage"
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "b9a1e29c-0050-4321-8765-b9a1e29c0050",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "SqlDatabases",
+                  "label": "Azure SQL Databases",
+                  "type": 5,
+                  "isRequired": false,
+                  "multiSelect": true,
+                  "query": "Resources | where type =~ 'microsoft.sql/servers/databases' | where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = strcat(name, ' (', resourceGroup, ')') | order by label asc",
+                  "crossComponentResources": [
+                    "{Subscription}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": [
+                      "value::all"
+                    ],
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "queryType": 1,
+                  "resourceType": "microsoft.resourcegraph/resources",
+                  "value": [
+                    "value::all"
+                  ]
+                },
+                {
+                  "id": "b9a1e29c-0051-4321-8765-b9a1e29c0051",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "MySqlFlex",
+                  "label": "MySQL Flexible Servers",
+                  "type": 5,
+                  "isRequired": false,
+                  "multiSelect": true,
+                  "query": "Resources | where type =~ 'microsoft.dbformysql/flexibleservers' | where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = name | order by label asc",
+                  "crossComponentResources": [
+                    "{Subscription}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": [
+                      "value::all"
+                    ],
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "queryType": 1,
+                  "resourceType": "microsoft.resourcegraph/resources",
+                  "value": [
+                    "value::all"
+                  ]
+                },
+                {
+                  "id": "b9a1e29c-0052-4321-8765-b9a1e29c0052",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "PostgresFlex",
+                  "label": "PostgreSQL Flexible Servers",
+                  "type": 5,
+                  "isRequired": false,
+                  "multiSelect": true,
+                  "query": "Resources | where type =~ 'microsoft.dbforpostgresql/flexibleservers' | where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = name | order by label asc",
+                  "crossComponentResources": [
+                    "{Subscription}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": [
+                      "value::all"
+                    ],
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "queryType": 1,
+                  "resourceType": "microsoft.resourcegraph/resources",
+                  "value": [
+                    "value::all"
+                  ]
+                },
+                {
+                  "id": "b9a1e29c-0053-4321-8765-b9a1e29c0053",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "CosmosAccounts",
+                  "label": "Cosmos DB Accounts",
+                  "type": 5,
+                  "isRequired": false,
+                  "multiSelect": true,
+                  "query": "Resources | where type =~ 'microsoft.documentdb/databaseaccounts' | where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | project value = id, label = name | order by label asc",
+                  "crossComponentResources": [
+                    "{Subscription}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": [
+                      "value::all"
+                    ],
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "queryType": 1,
+                  "resourceType": "microsoft.resourcegraph/resources",
+                  "value": [
+                    "value::all"
+                  ]
+                }
+              ],
+              "crossComponentResources": [
+                "{Subscription}"
+              ]
+            },
+            "name": "params-databases"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "## 🛢️ Databases PaaS\n\nVisão consolidada de bancos PaaS (Azure SQL, MySQL Flexible, PostgreSQL Flexible e Cosmos DB).\n\n> ⚠️ **Limitações**: `dtu_consumption_percent` só se aplica a SQL no modelo DTU. Em Cosmos DB serverless, `ProvisionedThroughput` pode não estar disponível.",
+              "style": "text"
+            },
+            "name": "text-databases-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\n| where type in~ ('microsoft.sql/servers/databases','microsoft.dbformysql/flexibleservers','microsoft.dbforpostgresql/flexibleservers','microsoft.documentdb/databaseaccounts')\n| where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| extend SKU = tostring(sku.name)\n| project Nome = name, Tipo = type, ['Grupo de Recursos'] = resourceGroup, SKU, Location = location\n| order by Tipo asc, Nome asc",
+              "size": 4,
+              "title": "Inventário Consolidado — Databases PaaS",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "table"
+            },
+            "name": "query-databases-list"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-db-sql-cpu-storage",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.sql/servers/databases",
+              "metricScope": 0,
+              "resourceParameter": "SqlDatabases",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.sql/servers/databases",
+                  "metric": "microsoft.sql/servers/databases--cpu_percent",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.sql/servers/databases",
+                  "metric": "microsoft.sql/servers/databases--cpu_percent",
+                  "aggregation": 5,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.sql/servers/databases",
+                  "metric": "microsoft.sql/servers/databases--dtu_consumption_percent",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.sql/servers/databases",
+                  "metric": "microsoft.sql/servers/databases--storage_percent",
+                  "aggregation": 4,
+                  "splitBy": null
+                }
+              ],
+              "title": "SQL DB — CPU, DTU e Storage (%)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-db-sql-cpu-storage"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-db-sql-connections",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.sql/servers/databases",
+              "metricScope": 0,
+              "resourceParameter": "SqlDatabases",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.sql/servers/databases",
+                  "metric": "microsoft.sql/servers/databases--connection_successful",
+                  "aggregation": 2,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.sql/servers/databases",
+                  "metric": "microsoft.sql/servers/databases--connection_failed",
+                  "aggregation": 2,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.sql/servers/databases",
+                  "metric": "microsoft.sql/servers/databases--deadlock",
+                  "aggregation": 2,
+                  "splitBy": null
+                }
+              ],
+              "title": "SQL DB — Conexões e Deadlocks (Total)",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-db-sql-connections"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-db-mysql-flex",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.dbformysql/flexibleservers",
+              "metricScope": 0,
+              "resourceParameter": "MySqlFlex",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.dbformysql/flexibleservers",
+                  "metric": "microsoft.dbformysql/flexibleservers--cpu_percent",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.dbformysql/flexibleservers",
+                  "metric": "microsoft.dbformysql/flexibleservers--memory_percent",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.dbformysql/flexibleservers",
+                  "metric": "microsoft.dbformysql/flexibleservers--storage_percent",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.dbformysql/flexibleservers",
+                  "metric": "microsoft.dbformysql/flexibleservers--active_connections",
+                  "aggregation": 4,
+                  "splitBy": null
+                }
+              ],
+              "title": "MySQL Flexible — CPU, Memória, Storage e Conexões",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-db-mysql-flex"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-db-postgres-flex",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.dbforpostgresql/flexibleservers",
+              "metricScope": 0,
+              "resourceParameter": "PostgresFlex",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.dbforpostgresql/flexibleservers",
+                  "metric": "microsoft.dbforpostgresql/flexibleservers--cpu_percent",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.dbforpostgresql/flexibleservers",
+                  "metric": "microsoft.dbforpostgresql/flexibleservers--memory_percent",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.dbforpostgresql/flexibleservers",
+                  "metric": "microsoft.dbforpostgresql/flexibleservers--storage_percent",
+                  "aggregation": 4,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.dbforpostgresql/flexibleservers",
+                  "metric": "microsoft.dbforpostgresql/flexibleservers--active_connections",
+                  "aggregation": 4,
+                  "splitBy": null
+                }
+              ],
+              "title": "PostgreSQL Flexible — CPU, Memória, Storage e Conexões",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-db-postgres-flex"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "chart-db-cosmos",
+              "version": "MetricsItem/2.0",
+              "size": 1,
+              "chartType": 2,
+              "resourceType": "microsoft.documentdb/databaseaccounts",
+              "metricScope": 0,
+              "resourceParameter": "CosmosAccounts",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "metrics": [
+                {
+                  "namespace": "microsoft.documentdb/databaseaccounts",
+                  "metric": "microsoft.documentdb/databaseaccounts--TotalRequestUnits",
+                  "aggregation": 2,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.documentdb/databaseaccounts",
+                  "metric": "microsoft.documentdb/databaseaccounts--NormalizedRUConsumption",
+                  "aggregation": 5,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.documentdb/databaseaccounts",
+                  "metric": "microsoft.documentdb/databaseaccounts--ProvisionedThroughput",
+                  "aggregation": 5,
+                  "splitBy": null
+                }
+              ],
+              "title": "Cosmos DB — RU, Consumo e Throughput",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "name": "metric-db-cosmos"
+          }
+        ]
+      },
+      "name": "tab-databases",
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Databases"
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## 💡 Oportunidades\n\nEsta aba reúne oportunidades de otimização com foco em recursos órfãos e recomendações do Azure Advisor.",
+              "style": "text"
+            },
+            "name": "text-opportunities-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources | where type =~ 'microsoft.compute/disks' | where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | where managedBy == '' or isnull(managedBy) | project Nome=name, ['Grupo de Recursos']=resourceGroup, SKU=sku.name, ['Tamanho (GB)']=toint(properties.diskSizeGB), Location=location",
+              "size": 2,
+              "title": "Discos não anexados",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "table"
+            },
+            "name": "query-opportunities-unattached-disks"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources | where type =~ 'microsoft.network/networkinterfaces' | where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | where isnull(properties.virtualMachine) | project Nome=name, ['Grupo de Recursos']=resourceGroup, Location=location",
+              "size": 2,
+              "title": "NICs sem VM",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "table"
+            },
+            "name": "query-opportunities-orphan-nics"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources | where type =~ 'microsoft.network/publicipaddresses' | where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | where isnull(properties.ipConfiguration) | project Nome=name, ['Grupo de Recursos']=resourceGroup, SKU=sku.name, ['Método de Alocação']=properties.publicIPAllocationMethod, Location=location",
+              "size": 2,
+              "title": "IPs públicos sem associação",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "table"
+            },
+            "name": "query-opportunities-orphan-public-ips"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources | where type =~ 'microsoft.web/serverfarms' | where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup}) | where toint(properties.numberOfSites) == 0 | project Nome=name, ['Grupo de Recursos']=resourceGroup, SKU=sku.name, Tier=sku.tier, Location=location",
+              "size": 2,
+              "title": "App Service Plans sem sites",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "table"
+            },
+            "name": "query-opportunities-empty-appserviceplans"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "advisorresources | where type =~ 'microsoft.advisor/recommendations' | where properties.category in ('Cost','Performance','HighAvailability') | project Categoria=properties.category, Impacto=properties.impact, Recurso=properties.impactedValue, Recomendacao=properties.shortDescription.solution | order by Categoria asc, Impacto asc",
+              "size": 4,
+              "title": "Recomendações do Advisor",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "table"
+            },
+            "name": "query-opportunities-advisor"
+          }
+        ]
+      },
+      "name": "tab-oportunidades",
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Oportunidades"
       }
     }
   ]
