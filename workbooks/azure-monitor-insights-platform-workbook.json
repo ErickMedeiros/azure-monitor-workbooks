@@ -324,7 +324,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Resources\n| where type =~ 'microsoft.compute/virtualmachines'\n| where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| project Nome = name, ['Grupo de Recursos'] = resourceGroup, Região = location, Tamanho = tostring(properties.hardwareProfile.vmSize), SO = tostring(properties.storageProfile.osDisk.osType), Estado = tostring(properties.provisioningState)\n| order by Nome asc",
+              "query": "Resources\n| where type =~ 'microsoft.compute/virtualmachines'\n| where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| project Nome = name, ['Grupo de Recursos'] = resourceGroup, ['Região'] = location, Tamanho = tostring(properties.hardwareProfile.vmSize), SO = tostring(properties.storageProfile.osDisk.osType), Estado = tostring(properties.provisioningState)\n| order by Nome asc",
               "size": 4,
               "title": "Lista de Máquinas Virtuais",
               "timeContextFromParameter": "TimeRange",
@@ -642,7 +642,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Resources\n| where type =~ 'microsoft.web/sites'\n| where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| project Nome = name, ['Grupo de Recursos'] = resourceGroup, Região = location, Kind = kind, Estado = tostring(properties.state), Hostname = tostring(properties.defaultHostName)\n| order by Nome asc",
+              "query": "Resources\n| where type =~ 'microsoft.web/sites'\n| where 'value::all' in~ ({ResourceGroup}) or resourceGroup in~ ({ResourceGroup})\n| project Nome = name, ['Grupo de Recursos'] = resourceGroup, ['Região'] = location, Kind = kind, Estado = tostring(properties.state), Hostname = tostring(properties.defaultHostName)\n| order by Nome asc",
               "size": 4,
               "title": "Lista de App Services",
               "timeContextFromParameter": "TimeRange",
