@@ -1189,6 +1189,190 @@
             "name": "text-storage-header"
           },
           {
+            "type": 1,
+            "content": {
+              "json": "### 📊 Visão Consolidada dos Sub-serviços de Storage\n\nRéplica da visão **Storage Browser** do portal: quantidade de objetos e capacidade utilizada para Blob, File, Table e Queue services agregados nos Storage Accounts filtrados.\n\n> ⏰ Métricas de capacidade são emitidas a cada **1 hora** (granularidade PT1H) e atualizadas no backend **2–4 vezes ao dia**. Use agregação **Maximum** para refletir o estado mais recente do período.",
+              "style": "info"
+            },
+            "name": "text-storage-kpis-intro"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "kpi-storage-blob",
+              "version": "MetricsItem/2.0",
+              "size": 3,
+              "chartType": 7,
+              "resourceType": "microsoft.storage/storageaccounts",
+              "metricScope": 0,
+              "resourceParameter": "StorageAccounts",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeRange",
+              "metrics": [
+                {
+                  "namespace": "microsoft.storage/storageaccounts/blobservices",
+                  "metric": "microsoft.storage/storageaccounts/blobservices--ContainerCount",
+                  "aggregation": 3,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.storage/storageaccounts/blobservices",
+                  "metric": "microsoft.storage/storageaccounts/blobservices--BlobCount",
+                  "aggregation": 3,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.storage/storageaccounts/blobservices",
+                  "metric": "microsoft.storage/storageaccounts/blobservices--BlobCapacity",
+                  "aggregation": 3,
+                  "splitBy": null
+                }
+              ],
+              "title": "📦 Blob Containers — Quantidade e Capacidade",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "customWidth": "50",
+            "name": "kpi-storage-blob"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "kpi-storage-files",
+              "version": "MetricsItem/2.0",
+              "size": 3,
+              "chartType": 7,
+              "resourceType": "microsoft.storage/storageaccounts",
+              "metricScope": 0,
+              "resourceParameter": "StorageAccounts",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeRange",
+              "metrics": [
+                {
+                  "namespace": "microsoft.storage/storageaccounts/fileservices",
+                  "metric": "microsoft.storage/storageaccounts/fileservices--FileShareCount",
+                  "aggregation": 3,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.storage/storageaccounts/fileservices",
+                  "metric": "microsoft.storage/storageaccounts/fileservices--FileCount",
+                  "aggregation": 3,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.storage/storageaccounts/fileservices",
+                  "metric": "microsoft.storage/storageaccounts/fileservices--FileCapacity",
+                  "aggregation": 3,
+                  "splitBy": null
+                }
+              ],
+              "title": "📁 File Shares — Quantidade e Capacidade",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "customWidth": "50",
+            "name": "kpi-storage-files"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "kpi-storage-tables",
+              "version": "MetricsItem/2.0",
+              "size": 3,
+              "chartType": 7,
+              "resourceType": "microsoft.storage/storageaccounts",
+              "metricScope": 0,
+              "resourceParameter": "StorageAccounts",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeRange",
+              "metrics": [
+                {
+                  "namespace": "microsoft.storage/storageaccounts/tableservices",
+                  "metric": "microsoft.storage/storageaccounts/tableservices--TableCount",
+                  "aggregation": 3,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.storage/storageaccounts/tableservices",
+                  "metric": "microsoft.storage/storageaccounts/tableservices--TableEntityCount",
+                  "aggregation": 3,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.storage/storageaccounts/tableservices",
+                  "metric": "microsoft.storage/storageaccounts/tableservices--TableCapacity",
+                  "aggregation": 3,
+                  "splitBy": null
+                }
+              ],
+              "title": "🗂️ Tables — Quantidade e Capacidade",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "customWidth": "50",
+            "name": "kpi-storage-tables"
+          },
+          {
+            "type": 10,
+            "content": {
+              "chartId": "kpi-storage-queues",
+              "version": "MetricsItem/2.0",
+              "size": 3,
+              "chartType": 7,
+              "resourceType": "microsoft.storage/storageaccounts",
+              "metricScope": 0,
+              "resourceParameter": "StorageAccounts",
+              "resourceIds": [],
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeRange",
+              "metrics": [
+                {
+                  "namespace": "microsoft.storage/storageaccounts/queueservices",
+                  "metric": "microsoft.storage/storageaccounts/queueservices--QueueCount",
+                  "aggregation": 3,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.storage/storageaccounts/queueservices",
+                  "metric": "microsoft.storage/storageaccounts/queueservices--QueueMessageCount",
+                  "aggregation": 3,
+                  "splitBy": null
+                },
+                {
+                  "namespace": "microsoft.storage/storageaccounts/queueservices",
+                  "metric": "microsoft.storage/storageaccounts/queueservices--QueueCapacity",
+                  "aggregation": 3,
+                  "splitBy": null
+                }
+              ],
+              "title": "📨 Queues — Quantidade e Capacidade",
+              "showOpenInMetricsExplorer": true,
+              "splitBy": {
+                "value": null
+              }
+            },
+            "customWidth": "50",
+            "name": "kpi-storage-queues"
+          },
+          {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
