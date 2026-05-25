@@ -1,6 +1,6 @@
 # azure-monitor-workbooks
 
-Workbook que realiza inventário de recursos e avalia métricas nativas do Azure Monitor — ainda em fase de desenvolvimento.
+Workbook que realiza inventário de recursos e avalia métricas nativas do Azure Monitor
 
 🌐 **Read this in other languages:** [English](./README.en.md)
 
